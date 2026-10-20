@@ -319,53 +319,37 @@ async function handleDispatch(e) {
     }
 
     // --- 4. INITIALISATION DE LA CARTE ---
-    function initMap() {
-      map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 13);
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
+  function initMap() {
+  // Coordonnées Abidjan
+  map = L.map('map', { zoomControl: true }).setView([5.3484, -4.0250], 13);
 
-      function initMap() {
-  map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 13);
-  L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-  // 1. Fond de carte 100% gratuit
+  // Serveur OpenStreetMap officiel et direct (100% fiable)
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; OpenStreetMap'
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // 2. Vos marqueurs de motos...
+  // Marqueurs motos
   fleetData.forEach(moto => {
-    // ... code existant ...
+    if (moto.status === 'maintenance') return;
+    const marker = L.circleMarker([moto.lat, moto.lng], {
+      radius: 8,
+      fillColor: moto.status === 'en_course' ? '#10b981' : '#6366f1',
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.9
+    }).addTo(map);
+
+    marker.bindPopup(`<b>${moto.id} - ${moto.rider}</b><br>Statut: ${moto.status}`);
+    markers[moto.id] = marker;
   });
 
-  // 3. Forcer le rafraîchissement d'affichage (résout l'affichage gris)
+  // Forcer le redimensionnement Leaflet
   setTimeout(() => {
     map.invalidateSize();
-  }, 250);
+  }, 300);
 }
-      // Fond de carte sombre gratuit (CARTO Dark Matter)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  maxZoom: 19,
-  subdomains: 'abcd',
-  attribution: '&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
-
-      fleetData.forEach(moto => {
-        if (moto.status === 'maintenance') return;
-        const marker = L.circleMarker([moto.lat, moto.lng], {
-          radius: 8,
-          fillColor: moto.status === 'en_course' ? '#10b981' : '#6366f1',
-          color: '#ffffff',
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9
-        }).addTo(map);
-
-        marker.bindPopup(`<b>${moto.id} - ${moto.rider}</b><br>Statut: ${moto.status}`);
-        markers[moto.id] = marker;
-      });
-    }
-
     // --- 5. GESTION DES ONGLETS ---
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => {
