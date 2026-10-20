@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi de votre livraison | FleetPulse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    #map { height: 100%; width: 100%; }
+    .leaflet-popup-content-wrapper { background: #0f172a; color: #fff; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans">
+
+  <!-- Carte Interactive -->
+  <div class="flex-1 relative">
+    <div id="map"></div>
+
+    <!-- En-tête flottant -->
+    <div class="absolute top-4 left-4 right-4 z-[500] max-w-md mx-auto bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 bg-emerald-500 rounded-full animate-ping"></div>
+        <div>
+          <h2 class="font-bold text-sm text-white">Livraison en cours</h2>
+          <p class="text-xs text-slate-400" id="order-dest">Destination : En cours...</p>
+        </div>
+      </div>
+      <span class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full font-bold" id="eta-badge">~ 12 min</span>
+    </div>
+  </div>
+
+  <!-- Fiche d'information livreur (Style Uber) -->
+  <div class="bg-slate-900 border-t border-slate-800 p-5 z-20">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-lg">
+          <i data-lucide="bike" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-base text-white" id="rider-name">Votre Motard</h3>
+          <p class="text-xs text-slate-400">Véhicule : <span id="moto-id" class="text-slate-200 font-semibold">MOTO-01</span></p>
+        </div>
+      </div>
+      <a href="tel:+22507070707" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-full text-emerald-400 border border-slate-700 transition">
+        <i data-lucide="phone" class="w-5 h-5"></i>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    const API_URL = "http://localhost:5000"; // ou votre URL Render
+
+    // Récupérer le token dans l'URL (ex: suivi.html?token=demo123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const trackingToken = urlParams.get('token') || "demo123";
+
+    let map, motoMarker, dropMarker;
+
+    // Initialisation
+    map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 14);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    // Marqueur moto
+    motoMarker = L.circleMarker([5.3484, -4.0250], {
+      radius: 9, fillColor: '#10b981', color: '#ffffff', weight: 3, fillOpacity: 1
+    }).addTo(map).bindPopup("Votre livreur");
+
+    // Connexion socket pour suivre la moto en direct
+    const socket = io(API_URL);
+    socket.emit('join_company', "c1a88b56-9b16-419b-8f3a-8b839ec9b001");
+
+    socket.on('moto_moved', (data) => {
+      motoMarker.setLatLng([data.lat, data.lng]);
+    });
+  </script>
+</body>
+</html>

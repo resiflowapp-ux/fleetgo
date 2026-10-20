@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion Entreprise | FleetPulse SaaS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="h-full flex items-center justify-center p-4">
+
+  <div class="bg-slate-900 border border-slate-800 w-full max-w-md p-8 rounded-3xl shadow-2xl">
+    <div class="text-center mb-8">
+      <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-lg shadow-indigo-500/30">
+        <i data-lucide="navigation-2" class="w-6 h-6"></i>
+      </div>
+      <h2 class="text-2xl font-black tracking-tight text-white">FleetPulse SaaS</h2>
+      <p class="text-xs text-slate-400 mt-1">Connectez-vous à votre espace flotte</p>
+    </div>
+
+    <form onsubmit="handleLogin(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Email Entreprise</label>
+        <input type="email" id="email" required placeholder="admin@express.ci" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Mot de passe</label>
+        <input type="password" id="password" required placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500">
+      </div>
+
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">
+        Se connecter au tableau de bord
+      </button>
+    </form>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    const API_URL = "http://localhost:5000"; // ou votre URL Render
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          // Sauvegarder la session
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('companyId', data.companyId);
+          localStorage.setItem('companyName', data.companyName);
+          // Rediriger vers le tableau de bord
+          window.location.href = "index.html";
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        alert("Erreur de connexion avec le serveur.");
+      }
+    }
+  </script>
+</body>
+</html>
