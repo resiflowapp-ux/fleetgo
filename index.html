@@ -253,7 +253,7 @@ async function handleDispatch(e) {
 }
     // --- 1. CONFIGURATION & DONNÉES LOCALES ---
     const COMPANY_ID = "c1a88b56-9b16-419b-8f3a-8b839ec9b001";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://fleetgo-dhbh.onrender.com";
 
     let fleetData = [
       { id: "MOTO-01", rider: "Jean Kouassi", lat: 5.3520, lng: -4.0150, status: "en_course", speed: 38, odo: 2850, lastOilKm: 0, cashOnHand: 18500, trips: 7 },
@@ -317,9 +317,32 @@ async function handleDispatch(e) {
       map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 13);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CartoDB & OpenStreetMap'
-      }).addTo(map);
+      function initMap() {
+  map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 13);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  // 1. Fond de carte 100% gratuit
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  // 2. Vos marqueurs de motos...
+  fleetData.forEach(moto => {
+    // ... code existant ...
+  });
+
+  // 3. Forcer le rafraîchissement d'affichage (résout l'affichage gris)
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 250);
+}
+      // Fond de carte sombre gratuit (CARTO Dark Matter)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  maxZoom: 19,
+  subdomains: 'abcd',
+  attribution: '&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
 
       fleetData.forEach(moto => {
         if (moto.status === 'maintenance') return;
