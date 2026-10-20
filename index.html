@@ -319,17 +319,19 @@ async function handleDispatch(e) {
     }
 
     // --- 4. INITIALISATION DE LA CARTE ---
-  function initMap() {
-  // Coordonnées Abidjan
-  map = L.map('map', { zoomControl: true }).setView([5.3484, -4.0250], 13);
+function initMap() {
+  // 1. Centrage sur Abidjan
+  map = L.map('map', { zoomControl: false }).setView([5.3484, -4.0250], 13);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // Serveur OpenStreetMap officiel et direct (100% fiable)
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // 2. Votre nouveau fond de carte CARTO Voyager
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_4q0n_1_b8db2c33069e52e09e340fb5', {
+    subdomains: 'abcd',
     maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(map);
 
-  // Marqueurs motos
+  // 3. Les marqueurs de vos motos
   fleetData.forEach(moto => {
     if (moto.status === 'maintenance') return;
     const marker = L.circleMarker([moto.lat, moto.lng], {
@@ -345,7 +347,7 @@ async function handleDispatch(e) {
     markers[moto.id] = marker;
   });
 
-  // Forcer le redimensionnement Leaflet
+  // 4. Forcer l'affichage Leaflet
   setTimeout(() => {
     map.invalidateSize();
   }, 300);
