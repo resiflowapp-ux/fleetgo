@@ -3,69 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FleetPulse Driver</title>
+  <title>FleetPulse Driver Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
-<body class="h-full flex flex-col justify-between p-5 font-sans select-none">
+<body class="h-full flex flex-col justify-between p-4 font-sans select-none">
 
-  <!-- Haut de page -->
-  <div>
-    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-      <div class="flex items-center gap-3">
-        <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
-          <i data-lucide="bike" class="w-6 h-6"></i>
+  <div class="space-y-4">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg">
+          <i data-lucide="bike" class="w-5 h-5"></i>
         </div>
         <div>
-          <h1 class="font-bold text-base leading-none">Espace Livreur</h1>
-          <span class="text-[11px] text-slate-400">Balise GPS Mobile</span>
+          <h1 class="font-bold text-sm leading-none">Console Motard</h1>
+          <span class="text-[10px] text-slate-400">GPS Haute Précision</span>
         </div>
       </div>
-      <span id="conn-badge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Hors ligne</span>
+      <span id="conn-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Hors ligne</span>
     </div>
 
     <!-- Sélecteur de moto -->
-    <div class="space-y-4">
-      <div>
-        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Votre Moto assignée</label>
-        <select id="moto-select" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm font-semibold text-white focus:outline-none focus:border-indigo-500">
-          <option value="MOTO-01">MOTO-01 (Jean Kouassi)</option>
-          <option value="MOTO-02">MOTO-02 (Amadou Diallo)</option>
-          <option value="MOTO-03">MOTO-03 (Koffi Serge)</option>
-        </select>
+    <select id="moto-select" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none">
+      <option value="MOTO-01">MOTO-01 (Jean Kouassi)</option>
+      <option value="MOTO-02">MOTO-02 (Amadou Diallo)</option>
+      <option value="MOTO-03">MOTO-03 (Koffi Serge)</option>
+    </select>
+
+    <!-- Fiche Course Active avec Navigation & Code OTP -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">Course active</span>
+          <h3 class="font-bold text-sm text-white mt-0.5" id="order-dest-title">Restaurant Le Diplomate</h3>
+          <p class="text-xs text-slate-400" id="order-dest-addr">Cocody Riviera 2, Carrefour Sainte Famille</p>
+        </div>
+        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg">2 350 FCFA</span>
       </div>
 
-      <!-- Télémétrie en direct -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-center">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Vitesse réelle</span>
-          <p class="text-2xl font-black text-white mt-0.5" id="val-speed">0 <span class="text-xs font-normal text-slate-400">km/h</span></p>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-center">
-          <span class="text-[10px] uppercase font-bold text-slate-400">Signaux GPS émis</span>
-          <p class="text-2xl font-black text-indigo-400 mt-0.5" id="val-pings">0</p>
+      <!-- BOUTON NAVIGATION GOOGLE MAPS DIRECT -->
+      <a id="btn-gmaps" href="https://www.google.com/maps/dir/?api=1&destination=5.3580,-3.9750" target="_blank" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition">
+        <i data-lucide="map-pin" class="w-4 h-4 text-rose-500"></i> Lancer la navigation Google Maps
+      </a>
+
+      <!-- VALIDATION PAR CODE OTP (PREUVE DE LIVRAISON) -->
+      <div class="border-t border-slate-800/80 pt-3">
+        <label class="block text-[11px] font-medium text-slate-300 mb-1">Code de confirmation remis par le client :</label>
+        <div class="flex gap-2">
+          <input type="text" id="otp-input" maxlength="4" placeholder="Ex: 4821" class="w-24 bg-slate-800 border border-slate-700 rounded-lg text-center font-mono font-bold text-base text-white tracking-widest focus:outline-none focus:border-emerald-500">
+          <button onclick="validerLivraisonOTP()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition cursor-pointer">
+            Valider la livraison
+          </button>
         </div>
       </div>
+    </div>
 
-      <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl text-xs space-y-1 text-slate-400">
-        <div class="flex justify-between"><span>Latitude :</span> <span class="font-mono text-slate-200" id="val-lat">--</span></div>
-        <div class="flex justify-between"><span>Longitude :</span> <span class="font-mono text-slate-200" id="val-lng">--</span></div>
+    <!-- Télémétrie GPS -->
+    <div class="grid grid-cols-2 gap-2 text-center">
+      <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <span class="text-[9px] uppercase font-bold text-slate-400">Vitesse réelle</span>
+        <p class="text-xl font-black text-white" id="val-speed">0 <span class="text-xs font-normal text-slate-400">km/h</span></p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <span class="text-[9px] uppercase font-bold text-slate-400">Points GPS transmis</span>
+        <p class="text-xl font-black text-indigo-400" id="val-pings">0</p>
       </div>
     </div>
   </div>
 
-  <!-- Bouton d'action principal -->
-  <div class="space-y-3">
-    <button id="btn-toggle" onclick="toggleTracking()" class="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-3">
+  <!-- Bouton Start / Stop Service -->
+  <div class="space-y-2 pt-4">
+    <button id="btn-toggle" onclick="toggleTracking()" class="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-3 cursor-pointer">
       <i data-lucide="play" class="w-5 h-5"></i> DÉMARRER MON SERVICE
     </button>
-    <p class="text-[11px] text-center text-slate-500">Gardez cet écran allumé pendant vos livraisons.</p>
+    <p class="text-[10px] text-center text-slate-500">Conservez cet écran actif pendant votre tournée.</p>
   </div>
 
   <script>
     lucide.createIcons();
-    // ⚠️ Remplacez par votre URL Render ou localhost:5000 pour tester sur PC
+    // ⚠️ METTEZ VOTRE LIEN RENDER (ex: https://fleetpulse-api.onrender.com) QUAND VOUS DÉPLOYEZ
     const API_URL = "http://localhost:5000"; 
     const COMPANY_ID = "c1a88b56-9b16-419b-8f3a-8b839ec9b001";
 
@@ -74,52 +91,42 @@
     socket = io(API_URL);
 
     socket.on('connect', () => {
-      document.getElementById('conn-badge').className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+      document.getElementById('conn-badge').className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
       document.getElementById('conn-badge').innerText = "Connecté";
     });
 
     socket.on('disconnect', () => {
-      document.getElementById('conn-badge').className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20";
+      document.getElementById('conn-badge').className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20";
       document.getElementById('conn-badge').innerText = "Déconnecté";
     });
 
     function toggleTracking() {
-      if (!isTracking) {
-        startTracking();
-      } else {
-        stopTracking();
-      }
+      if (!isTracking) startTracking();
+      else stopTracking();
     }
 
     function startTracking() {
       if (!navigator.geolocation) {
-        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        alert("La géolocalisation n'est pas supportée par votre téléphone.");
         return;
       }
-
       const motoId = document.getElementById('moto-select').value;
       isTracking = true;
 
-      // Style du bouton
       const btn = document.getElementById('btn-toggle');
       btn.className = "w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-base shadow-lg shadow-rose-600/30 transition flex items-center justify-center gap-3";
       btn.innerHTML = `<i data-lucide="square" class="w-5 h-5"></i> ARRÊTER LE SERVICE`;
       lucide.createIcons();
 
-      // Activation du GPS haute précision
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
           const { latitude, longitude, speed } = pos.coords;
-          const currentSpeed = speed ? Math.round(speed * 3.6) : 0; // m/s -> km/h
+          const currentSpeed = speed ? Math.round(speed * 3.6) : 0;
 
-          document.getElementById('val-lat').innerText = latitude.toFixed(5);
-          document.getElementById('val-lng').innerText = longitude.toFixed(5);
           document.getElementById('val-speed').innerHTML = `${currentSpeed} <span class="text-xs font-normal text-slate-400">km/h</span>`;
-          
           pingsCount++;
           document.getElementById('val-pings').innerText = pingsCount;
 
-          // Émission du point GPS au serveur
           socket.emit('driver_gps_ping', {
             companyId: COMPANY_ID,
             motoId: motoId,
@@ -128,7 +135,7 @@
             speed: currentSpeed
           });
         },
-        (err) => console.error("Erreur GPS:", err.message),
+        (err) => console.warn(err.message),
         { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
       );
     }
@@ -136,11 +143,20 @@
     function stopTracking() {
       if (watchId) navigator.geolocation.clearWatch(watchId);
       isTracking = false;
-
       const btn = document.getElementById('btn-toggle');
       btn.className = "w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-3";
       btn.innerHTML = `<i data-lucide="play" class="w-5 h-5"></i> DÉMARRER MON SERVICE`;
       lucide.createIcons();
+    }
+
+    function validerLivraisonOTP() {
+      const code = document.getElementById('otp-input').value.trim();
+      if (code.length < 4) {
+        alert("Veuillez saisir le code à 4 chiffres.");
+        return;
+      }
+      alert(`✅ Livraison validée avec succès pour le code ${code} ! Votre caisse a été créditée.`);
+      document.getElementById('otp-input').value = '';
     }
   </script>
 </body>

@@ -13,25 +13,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Socket.io Client -->
+  <!-- Socket.io & Export Excel (SheetJS) -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
-    #map { 
-      height: 600px !important; 
-      min-height: 500px !important; 
-      width: 100% !important; 
-      border-radius: 0.75rem; 
-      background-color: #1e293b;
-      z-index: 1; 
-    }
+    #map { height: 600px !important; min-height: 500px !important; width: 100% !important; border-radius: 0.75rem; background-color: #1e293b; z-index: 1; }
     .leaflet-popup-content-wrapper { background: #0f172a; color: #f8fafc; border: 1px solid #334155; }
     .leaflet-popup-tip { background: #0f172a; }
   </style>
 </head>
 <body class="h-full flex overflow-hidden font-sans">
 
-  <!-- BARRE LATÉRALE (SIDEBAR) -->
+  <!-- SIDEBAR -->
   <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between p-4 z-20">
     <div>
       <div class="flex items-center gap-3 px-2 py-3 mb-6">
@@ -45,34 +39,30 @@
       </div>
 
       <div class="bg-slate-800/60 border border-slate-700/60 rounded-lg p-2.5 mb-6">
-        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Organisation</span>
+        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Organisation active</span>
         <div class="flex items-center justify-between mt-1">
           <span class="text-sm font-medium text-slate-200">Express Delivery CI</span>
           <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Pro</span>
         </div>
       </div>
 
-      <!-- Menu -->
       <nav class="space-y-1">
-        <button onclick="switchTab('map-view')" id="btn-map-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-indigo-600 text-white transition">
+        <button onclick="switchTab('map-view')" id="btn-map-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-indigo-600 text-white transition cursor-pointer">
           <i data-lucide="map" class="w-4 h-4"></i> Flotte & GPS Live
         </button>
-        <button onclick="switchTab('pms-view')" id="btn-pms-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition">
+        <button onclick="switchTab('pms-view')" id="btn-pms-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition cursor-pointer">
           <i data-lucide="wrench" class="w-4 h-4"></i> Maintenance (PMS)
           <span id="pms-alert-badge" class="ml-auto bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500/30">1 alerte</span>
         </button>
-        <button onclick="switchTab('finance-view')" id="btn-finance-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition">
+        <button onclick="switchTab('finance-view')" id="btn-finance-view" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition cursor-pointer">
           <i data-lucide="wallet" class="w-4 h-4"></i> Finances & Caisses
         </button>
       </nav>
     </div>
 
-    <!-- Utilisateur -->
     <div class="border-t border-slate-800 pt-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm text-slate-200">
-          AD
-        </div>
+        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm text-slate-200">AD</div>
         <div>
           <p class="text-xs font-semibold text-slate-200">Admin Dispatch</p>
           <p class="text-[11px] text-slate-400">admin@express.ci</p>
@@ -85,37 +75,36 @@
   <!-- CONTENU PRINCIPAL -->
   <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
 
-    <!-- HEADER SUPÉRIEUR AVEC BOUTONS -->
     <header class="h-16 border-b border-slate-800 px-6 flex items-center justify-between bg-slate-900/50 backdrop-blur">
       <div class="flex items-center gap-4">
         <h2 id="view-title" class="font-semibold text-base text-slate-100">Supervision en direct</h2>
         <span id="server-status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connecté au serveur
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connecté
         </span>
       </div>
       <div class="flex items-center gap-3">
-        <!-- Bouton Nouvelle Livraison -->
         <button onclick="openDispatchModal()" class="bg-emerald-600 hover:bg-emerald-500 text-xs text-white font-semibold px-3.5 py-2 rounded-lg flex items-center gap-2 shadow-sm transition cursor-pointer">
           <i data-lucide="plus-circle" class="w-4 h-4"></i> Nouvelle livraison
         </button>
-        <button onclick="simulateGPSMove()" class="bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 shadow-sm transition">
+        <button onclick="exportExcelReport()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer">
+          <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> Export Excel
+        </button>
+        <button onclick="simulateGPSMove()" class="bg-indigo-600 hover:bg-indigo-500 text-xs text-white font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 transition cursor-pointer">
           <i data-lucide="play" class="w-3.5 h-3.5"></i> Simuler GPS
         </button>
       </div>
     </header>
 
-    <!-- ZONE D'AFFICHAGE -->
     <div class="flex-1 overflow-auto p-6">
 
-      <!-- VUE 1 : CARTE & FLOTTE -->
+      <!-- VUE 1 : CARTE -->
       <div id="view-map" class="h-full flex gap-6">
         <div class="flex-1 bg-slate-900 rounded-xl border border-slate-800 p-1 relative shadow-inner">
           <div id="map"></div>
         </div>
-
         <div class="w-80 flex flex-col gap-3">
           <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
-            <h3 class="text-xs uppercase font-bold tracking-wider text-slate-400 mb-3">Statut de la flotte</h3>
+            <h3 class="text-xs uppercase font-bold tracking-wider text-slate-400 mb-3">Statut Flotte</h3>
             <div class="grid grid-cols-3 gap-2 text-center">
               <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-800">
                 <span class="text-xl font-bold text-emerald-400" id="stat-active">2</span>
@@ -131,44 +120,39 @@
               </div>
             </div>
           </div>
-
-          <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="moto-cards-container">
-            <!-- Rempli par JavaScript -->
-          </div>
+          <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="moto-cards-container"></div>
         </div>
       </div>
 
-      <!-- VUE 2 : PMS (MAINTENANCE) -->
+      <!-- VUE 2 : PMS MAINTENANCE -->
       <div id="view-pms" class="hidden space-y-6">
         <div>
           <h3 class="text-lg font-bold text-white">Maintenance Préventive (PMS)</h3>
-          <p class="text-xs text-slate-400">Les compteurs kilométriques sont mis à jour par le GPS</p>
+          <p class="text-xs text-slate-400">Compteurs kilométriques incrémentés automatiquement via le GPS</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="pms-fleet-cards">
-          <!-- Rempli par JavaScript -->
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="pms-fleet-cards"></div>
       </div>
 
-      <!-- VUE 3 : FINANCES -->
+      <!-- VUE 3 : FINANCES & CAISSES -->
       <div id="view-finance" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-            <span class="text-xs text-slate-400 font-medium">Chiffre d'Affaires du jour</span>
+            <span class="text-xs text-slate-400 font-medium">Chiffre d'Affaires</span>
             <p class="text-2xl font-bold text-white mt-1">82 500 FCFA</p>
-            <span class="text-[11px] text-emerald-400">Estimé</span>
+            <span class="text-[11px] text-emerald-400">Journée active</span>
           </div>
           <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl border-l-4 border-l-amber-500">
             <span class="text-xs text-slate-400 font-medium">Cash en circulation</span>
             <p class="text-2xl font-bold text-amber-400 mt-1" id="kpi-cash">46 000 FCFA</p>
-            <span class="text-[11px] text-slate-400">À reverser par les livreurs</span>
+            <span class="text-[11px] text-slate-400">À reverser au bureau</span>
           </div>
           <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-            <span class="text-xs text-slate-400 font-medium">Commissions dues</span>
+            <span class="text-xs text-slate-400 font-medium">Commissions motards</span>
             <p class="text-2xl font-bold text-indigo-400 mt-1">16 500 FCFA</p>
-            <span class="text-[11px] text-slate-400">Part motards (20%)</span>
+            <span class="text-[11px] text-slate-400">Part livreurs (20%)</span>
           </div>
           <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-            <span class="text-xs text-slate-400 font-medium">Marge nette estimée</span>
+            <span class="text-xs text-slate-400 font-medium">Marge brute</span>
             <p class="text-2xl font-bold text-emerald-400 mt-1">66 000 FCFA</p>
             <span class="text-[11px] text-slate-400">Après commissions</span>
           </div>
@@ -177,22 +161,20 @@
         <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
           <div class="p-4 border-b border-slate-800 flex justify-between items-center">
             <h4 class="font-semibold text-sm">Clôture des Caisses & Versements Espèces</h4>
-            <span class="text-xs text-slate-400">Mise à jour en temps réel</span>
+            <span class="text-xs text-slate-400">Suivi du Cash on Delivery (COD)</span>
           </div>
           <table class="w-full text-left text-sm text-slate-300">
             <thead class="bg-slate-800/50 text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
               <tr>
                 <th class="p-3.5 pl-4">Livreur & Moto</th>
                 <th class="p-3.5">Courses</th>
-                <th class="p-3.5">Espèces Perçues (COD)</th>
-                <th class="p-3.5">Commission Motard</th>
-                <th class="p-3.5">Statut Règlement</th>
+                <th class="p-3.5">Espèces à rendre</th>
+                <th class="p-3.5">Commission</th>
+                <th class="p-3.5">Statut</th>
                 <th class="p-3.5 text-right pr-4">Action</th>
               </tr>
             </thead>
-            <tbody id="finance-table-body" class="divide-y divide-slate-800">
-              <!-- Rempli par JavaScript -->
-            </tbody>
+            <tbody id="finance-table-body" class="divide-y divide-slate-800"></tbody>
           </table>
         </div>
       </div>
@@ -200,65 +182,65 @@
     </div>
   </main>
 
-  <!-- MODAL NOUVELLE LIVRAISON (DISPATCH) -->
+  <!-- MODAL NOUVELLE LIVRAISON ENTERPRISE -->
   <div id="dispatch-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative">
       <div class="flex justify-between items-center mb-5">
         <div>
-          <h3 class="font-bold text-lg text-white">Créer une livraison</h3>
-          <p class="text-xs text-slate-400">Calcul automatique du tarif et dispatch</p>
+          <h3 class="font-bold text-lg text-white">Nouvelle livraison</h3>
+          <p class="text-xs text-slate-400">Recherche d'adresses & Notification WhatsApp instantanée</p>
         </div>
         <button type="button" onclick="closeDispatchModal()" class="text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Nom du client</label>
-          <input type="text" id="order-client" placeholder="Ex: Restaurant Le Diplomate" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-        </div>
-
+      <div class="space-y-3.5">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Lieu de ramassage</label>
-            <select id="order-pickup" onchange="updatePriceEstimate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-              <option value="5.3364,-4.0267">Plateau (Centre des affaires)</option>
-              <option value="5.3550,-4.0080">Cocody (St Jean)</option>
-              <option value="5.3120,-4.0150">Treichville</option>
-            </select>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Nom du client</label>
+            <input type="text" id="order-client" placeholder="Ex: Boutique Sarah" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Lieu de livraison</label>
-            <select id="order-drop" onchange="updatePriceEstimate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-              <option value="5.3580,-3.9750">Cocody Riviera 2</option>
-              <option value="5.2890,-3.9850">Marcory (Zone 4)</option>
-              <option value="5.3420,-4.0720">Yopougon (Siporex)</option>
-            </select>
+            <label class="block text-xs font-medium text-slate-300 mb-1">WhatsApp Destinataire</label>
+            <input type="tel" id="order-phone" placeholder="Ex: 2250701020304" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
           </div>
         </div>
 
-        <!-- ESTIMATION DU PRIX -->
+        <!-- Recherche Ramassage -->
+        <div class="relative">
+          <label class="block text-xs font-medium text-slate-300 mb-1">Lieu de ramassage (Départ)</label>
+          <input type="text" id="input-pickup" oninput="searchAddress(this.value, 'pickup')" placeholder="Tapez un quartier, une rue (ex: Plateau CCIA)..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+          <div id="results-pickup" class="absolute left-0 right-0 top-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 max-h-40 overflow-y-auto hidden"></div>
+          <input type="hidden" id="pickup-coords" value="5.3364,-4.0267">
+        </div>
+
+        <!-- Recherche Livraison -->
+        <div class="relative">
+          <label class="block text-xs font-medium text-slate-300 mb-1">Lieu de livraison (Destination)</label>
+          <input type="text" id="input-drop" oninput="searchAddress(this.value, 'drop')" placeholder="Tapez une destination (ex: Cocody St Jean)..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+          <div id="results-drop" class="absolute left-0 right-0 top-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 max-h-40 overflow-y-auto hidden"></div>
+          <input type="hidden" id="drop-coords" value="5.3580,-3.9750">
+        </div>
+
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 flex justify-between items-center">
           <div>
-            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Distance estimée</span>
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Distance calculée</span>
             <p class="text-sm font-semibold text-slate-200" id="est-distance">5.4 km</p>
           </div>
           <div class="text-right">
-            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Tarif calculé</span>
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Tarif livraison</span>
             <p class="text-lg font-bold text-emerald-400" id="est-price">2 350 FCFA</p>
           </div>
         </div>
 
-        <!-- BOUTON CLIC DIRECT -->
-        <button type="button" id="btn-dispatch-submit" onclick="executeDispatchDirect()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-indigo-600/30">
-          <i data-lucide="send" class="w-4 h-4"></i> Assigner à la moto la plus proche
+        <button type="button" id="btn-dispatch-submit" onclick="executeDispatchEnterprise()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-indigo-600/30">
+          <i data-lucide="send" class="w-4 h-4"></i> Assigner & Préparer WhatsApp
         </button>
       </div>
     </div>
   </div>
 
-  <!-- CODE JAVASCRIPT DU DASHBOARD -->
   <script>
-    // ⚠️ REMPLACEZ PAR VOTRE ADRESSE RENDER POUR LE SITE EN LIGNE
+    // ⚠️ METTEZ VOTRE LIEN RENDER (ex: https://fleetpulse-api.onrender.com) QUAND VOUS DÉPLOYEZ
     const API_URL = "http://localhost:5000"; 
     const COMPANY_ID = "c1a88b56-9b16-419b-8f3a-8b839ec9b001";
 
@@ -280,26 +262,15 @@
       connectSocket();
     });
 
-    // 1. CARTE LEAFLET (OPENSTREETMAP)
     function initMap() {
       map = L.map('map', { zoomControl: true }).setView([5.3484, -4.0250], 13);
-
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
 
       fleetData.forEach(moto => {
         if (moto.status === 'maintenance') return;
         const marker = L.circleMarker([moto.lat, moto.lng], {
-          radius: 8,
-          fillColor: moto.status === 'en_course' ? '#10b981' : '#6366f1',
-          color: '#ffffff',
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9
+          radius: 8, fillColor: moto.status === 'en_course' ? '#10b981' : '#6366f1', color: '#ffffff', weight: 2, fillOpacity: 0.9
         }).addTo(map);
-
         marker.bindPopup(`<b>${moto.id} - ${moto.rider}</b><br>Statut: ${moto.status}`);
         markers[moto.id] = marker;
       });
@@ -307,13 +278,12 @@
       setTimeout(() => { map.invalidateSize(); }, 300);
     }
 
-    // 2. SOCKET.IO
     function connectSocket() {
       try {
         const socket = io(API_URL);
         socket.on('connect', () => {
           socket.emit('join_company', COMPANY_ID);
-          document.getElementById('server-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connecté au serveur`;
+          document.getElementById('server-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Connecté`;
         });
         socket.on('connect_error', () => {
           document.getElementById('server-status').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mode Démo Local`;
@@ -327,19 +297,43 @@
           }
         });
       } catch (e) {
-        console.warn("Socket indisponible.");
+        console.warn("Socket indisponible");
       }
     }
 
-    // 3. FONCTIONS NOUVELLE LIVRAISON (DISPATCH)
-    function openDispatchModal() {
-      document.getElementById('dispatch-modal').classList.remove('hidden');
-      updatePriceEstimate();
-      lucide.createIcons();
-    }
-
-    function closeDispatchModal() {
-      document.getElementById('dispatch-modal').classList.add('hidden');
+    // RECHERCHE D'ADRESSES NOMINATIM (GRATUITE ET RÉELLE)
+    let searchTimeout = null;
+    async function searchAddress(query, type) {
+      clearTimeout(searchTimeout);
+      const resultsContainer = document.getElementById(`results-${type}`);
+      if (!query || query.length < 3) {
+        resultsContainer.classList.add('hidden');
+        return;
+      }
+      searchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ci&limit=5`);
+          const places = await res.json();
+          resultsContainer.innerHTML = '';
+          if (places.length === 0) {
+            resultsContainer.innerHTML = `<div class="p-2 text-xs text-slate-400">Aucun résultat trouvé</div>`;
+          } else {
+            places.forEach(place => {
+              const item = document.createElement('div');
+              item.className = "p-2 hover:bg-slate-700 text-xs text-slate-200 cursor-pointer border-b border-slate-700/50 last:border-0";
+              item.innerText = place.display_name;
+              item.onclick = () => {
+                document.getElementById(`input-${type}`).value = place.display_name.split(',')[0];
+                document.getElementById(`${type}-coords`).value = `${place.lat},${place.lon}`;
+                resultsContainer.classList.add('hidden');
+                recalculatePrice();
+              };
+              resultsContainer.appendChild(item);
+            });
+          }
+          resultsContainer.classList.remove('hidden');
+        } catch (e) {}
+      }, 350);
     }
 
     function calculateSimpleDistance(lat1, lon1, lat2, lon2) {
@@ -350,68 +344,69 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function updatePriceEstimate() {
-      const [pLat, pLng] = document.getElementById('order-pickup').value.split(',').map(Number);
-      const [dLat, dLng] = document.getElementById('order-drop').value.split(',').map(Number);
+    function recalculatePrice() {
+      const [pLat, pLng] = document.getElementById('pickup-coords').value.split(',').map(Number);
+      const [dLat, dLng] = document.getElementById('drop-coords').value.split(',').map(Number);
       const dist = Math.round(calculateSimpleDistance(pLat, pLng, dLat, dLng) * 10) / 10;
       const price = Math.round(1000 + (dist * 250));
-
       document.getElementById('est-distance').innerText = `${dist} km`;
       document.getElementById('est-price').innerText = `${price.toLocaleString()} FCFA`;
     }
 
-    async function executeDispatchDirect() {
-      const clientInput = document.getElementById('order-client');
-      const pickupSelect = document.getElementById('order-pickup');
-      const dropSelect = document.getElementById('order-drop');
+    function openDispatchModal() {
+      document.getElementById('dispatch-modal').classList.remove('hidden');
+      recalculatePrice();
+      lucide.createIcons();
+    }
+
+    function closeDispatchModal() {
+      document.getElementById('dispatch-modal').classList.add('hidden');
+    }
+
+    // DISPATCH & NOTIFICATION WHATSAPP
+    async function executeDispatchEnterprise() {
+      const clientNom = document.getElementById('order-client').value.trim();
+      const clientPhone = document.getElementById('order-phone').value.trim();
+      const pickupText = document.getElementById('input-pickup').value.trim() || "Plateau";
+      const dropText = document.getElementById('input-drop').value.trim() || "Cocody";
+      const [pickupLat, pickupLng] = document.getElementById('pickup-coords').value.split(',').map(Number);
+      const [dropLat, dropLng] = document.getElementById('drop-coords').value.split(',').map(Number);
       const btn = document.getElementById('btn-dispatch-submit');
 
-      if (!clientInput.value.trim()) {
-        alert("Veuillez saisir le nom du client avant d'assigner la course.");
-        clientInput.focus();
+      if (!clientNom) {
+        alert("Veuillez saisir le nom du client.");
         return;
       }
 
-      const clientNom = clientInput.value.trim();
-      const [pickupLat, pickupLng] = pickupSelect.value.split(',').map(Number);
-      const [dropLat, dropLng] = dropSelect.value.split(',').map(Number);
-      const pickupText = pickupSelect.selectedOptions[0].text;
-      const dropText = dropSelect.selectedOptions[0].text;
-
       const originalHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-2">⏳</span> Recherche de la moto en cours...`;
+      btn.innerHTML = `<span class="animate-spin mr-2">⏳</span> Recherche de la moto...`;
 
       try {
         const res = await fetch(`${API_URL}/api/orders/dispatch`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-company-id': COMPANY_ID
-          },
-          body: JSON.stringify({
-            clientNom,
-            ramassage: pickupText,
-            livraison: dropText,
-            pickupLat,
-            pickupLng,
-            dropLat,
-            dropLng
-          })
+          headers: { 'Content-Type': 'application/json', 'x-company-id': COMPANY_ID },
+          body: JSON.stringify({ clientNom, ramassage: pickupText, livraison: dropText, pickupLat, pickupLng, dropLat, dropLng })
         });
-
         const data = await res.json();
 
         if (res.ok) {
-          alert(`🎉 Course assignée avec succès !\n\n🏍️ Moto affectée : ${data.motoAssignee} (${data.livreur})\n📏 Distance : ${data.distanceKm} km\n💵 Tarif : ${data.tarif.toLocaleString()} FCFA`);
+          const trackingUrl = `${window.location.origin}/suivi.html?token=TRK-${Date.now().toString(36).toUpperCase()}`;
+
+          if (clientPhone) {
+            const cleanPhone = clientPhone.replace(/[^0-9]/g, '');
+            const msg = encodeURIComponent(`Bonjour ${clientNom} ! Votre commande est prise en charge par ${data.livreur} (${data.motoAssignee}).\n\nSuivez votre moto en direct ici : ${trackingUrl}\nMontant à préparer : ${data.tarif.toLocaleString()} FCFA.`);
+            window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
+          }
+
+          alert(`🎉 Livraison assignée avec succès à ${data.motoAssignee} (${data.livreur}) !`);
           closeDispatchModal();
           location.reload();
         } else {
-          alert(`⚠️ Information du serveur : ${data.error || "Aucune moto disponible"}`);
+          alert(`Info : ${data.error || "Aucune moto disponible"}`);
         }
       } catch (err) {
-        console.error(err);
-        alert(`❌ Connexion impossible avec le serveur (${API_URL}). Si votre backend est sur Render, laissez-lui 30 secondes pour se réveiller.`);
+        alert("Erreur de connexion au serveur.");
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalHtml;
@@ -419,12 +414,26 @@
       }
     }
 
-    // 4. ONGLETS ET LOGIQUE MÉTIER
+    // EXPORT COMPTABLE EXCEL (SHEETJS)
+    function exportExcelReport() {
+      const dataToExport = fleetData.map(m => ({
+        "Identifiant Moto": m.id,
+        "Nom Livreur": m.rider,
+        "Courses effectuees": m.trips,
+        "Odomètre (km)": m.odo,
+        "Especes en poche (FCFA)": m.cashOnHand,
+        "Commission Livreur (FCFA)": Math.round(m.cashOnHand * 0.20),
+        "Statut Actuel": m.status
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(dataToExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Rapport_Flotte");
+      XLSX.writeFile(wb, `FleetPulse_Rapport_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-indigo-600', 'text-white');
-        btn.classList.add('text-slate-400');
-      });
+      document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-indigo-600', 'text-white'); b.classList.add('text-slate-400'); });
       document.getElementById('btn-' + tabId).classList.add('bg-indigo-600', 'text-white');
       document.getElementById('btn-' + tabId).classList.remove('text-slate-400');
 
@@ -452,7 +461,6 @@
         const badgeColor = m.status === 'en_course' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
                            m.status === 'disponible' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' : 
                            'bg-amber-500/20 text-amber-400 border-amber-500/30';
-
         container.innerHTML += `
           <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg hover:border-slate-700 transition cursor-pointer" onclick="centerMap('${m.id}')">
             <div class="flex justify-between items-start">
@@ -495,13 +503,11 @@
       const container = document.getElementById('pms-fleet-cards');
       container.innerHTML = '';
       let alertCount = 0;
-
       fleetData.forEach(m => {
         const kmSinceOil = m.odo - m.lastOilKm;
         const oilLifePercent = Math.min(100, Math.round((kmSinceOil / 3000) * 100));
         const isUrgent = kmSinceOil >= 3000;
         if(isUrgent) alertCount++;
-
         container.innerHTML += `
           <div class="bg-slate-900 border ${isUrgent ? 'border-amber-500/50 shadow-lg shadow-amber-500/5' : 'border-slate-800'} rounded-xl p-5">
             <div class="flex justify-between items-start mb-3">
@@ -509,11 +515,11 @@
                 <h4 class="font-bold text-base text-white">${m.id}</h4>
                 <p class="text-xs text-slate-400">${m.rider}</p>
               </div>
-              ${isUrgent ? '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">VIDANGE REQUISE</span>' : '<span class="text-emerald-400 text-xs font-medium">À jour</span>'}
+              ${isUrgent ? '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded">VIDANGE URGENTE</span>' : '<span class="text-emerald-400 text-xs font-medium">À jour</span>'}
             </div>
             <div class="mt-4">
               <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-400">Cycle vidange (3 000 km)</span>
+                <span class="text-slate-400">Cycle Vidange (3 000 km)</span>
                 <span class="font-bold ${isUrgent ? 'text-amber-400' : 'text-slate-200'}">${kmSinceOil} / 3000 km</span>
               </div>
               <div class="w-full bg-slate-800 rounded-full h-2">
@@ -544,24 +550,17 @@
       const tbody = document.getElementById('finance-table-body');
       tbody.innerHTML = '';
       let totalCash = 0;
-
       fleetData.forEach(m => {
         totalCash += m.cashOnHand;
         const commission = Math.round(m.cashOnHand * 0.20);
         const hasCash = m.cashOnHand > 0;
-
         tbody.innerHTML += `
           <tr class="hover:bg-slate-800/30 transition">
-            <td class="p-3.5 pl-4">
-              <div class="font-medium text-white">${m.rider}</div>
-              <div class="text-xs text-slate-400">${m.id}</div>
-            </td>
+            <td class="p-3.5 pl-4"><div class="font-medium text-white">${m.rider}</div><div class="text-xs text-slate-400">${m.id}</div></td>
             <td class="p-3.5 font-medium">${m.trips}</td>
             <td class="p-3.5 font-bold ${hasCash ? 'text-amber-400' : 'text-slate-400'}">${m.cashOnHand.toLocaleString()} FCFA</td>
             <td class="p-3.5 text-indigo-300 font-medium">${commission.toLocaleString()} FCFA</td>
-            <td class="p-3.5">
-              ${hasCash ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">En circulation</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Soldée</span>'}
-            </td>
+            <td class="p-3.5">${hasCash ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">En circulation</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Soldée</span>'}</td>
             <td class="p-3.5 text-right pr-4">
               ${hasCash ? `<button onclick="collectCash('${m.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">Encaisser</button>` : `<span class="text-xs text-slate-500">Aucun solde</span>`}
             </td>
