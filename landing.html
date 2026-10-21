@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetgo | Logiciel SaaS de Gestion de Flotte Moto & Livraison</title>
+  <meta name="description" content="La solution n°1 pour gérer vos coursiers, sécuriser le cash (COD), automatiser la maintenance PMS et notifier vos clients en direct sur WhatsApp.">
+
+  <!-- Tailwind CSS & Icônes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+  <!-- NAVIGATION -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-indigo-600 p-2.5 rounded-2xl text-white shadow-lg shadow-indigo-500/30">
+          <i data-lucide="navigation-2" class="w-6 h-6"></i>
+        </div>
+        <span class="font-extrabold text-xl tracking-tight text-white">FleetPulse <span class="text-indigo-400 font-semibold text-sm">Enterprise</span></span>
+      </div>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+        <a href="#fonctionnalites" class="hover:text-white transition">Fonctionnalités</a>
+        <a href="#problemes" class="hover:text-white transition">Pourquoi FleetPulse</a>
+        <a href="#tarifs" class="hover:text-white transition">Tarifs</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="login.html" class="text-xs font-semibold text-slate-300 hover:text-white px-4 py-2.5 transition">Espace Client</a>
+        <a href="https://wa.me/2250749309717?text=Bonjour,%20je%20souhaite%20une%20démo%20de%20FleetPulse%20pour%20ma%20flotte%20de%20motos" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Demander une Démo
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="pt-36 pb-20 relative overflow-hidden">
+    <!-- Glow décoratif -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-600/20 blur-[130px] rounded-full pointer-events-none"></div>
+
+    <div class="max-w-5xl mx-auto px-6 text-center relative z-10">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Développé pour les entreprises de livraison modernes
+      </span>
+      
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
+        Prenez le contrôle total de votre <span class="gradient-text">flotte de livraison</span>.
+      </h1>
+
+      <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Suivez vos motards en direct, supprimez les litiges d'espèces (COD), automatisez l'entretien de vos motos et enchantez vos clients avec le suivi WhatsApp instantané.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://wa.me/2250749309717?text=Bonjour,%20je%20veux%20essayer%20FleetPulse%20pendant%2014%20jours" target="_blank" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+          <i data-lucide="zap" class="w-5 h-5"></i> Essai gratuit de 14 jours
+        </a>
+        <a href="index.html" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-semibold px-8 py-4 rounded-2xl transition flex items-center justify-center gap-2">
+          <i data-lucide="play" class="w-4 h-4 text-emerald-400"></i> Voir la Démo Interactive
+        </a>
+      </div>
+
+      <!-- Chiffres clés -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-12 border-t border-slate-800/80">
+        <div>
+          <p class="text-3xl font-black text-white">0 FCFA</p>
+          <p class="text-xs text-slate-400 mt-1">Écart de caisse toléré</p>
+        </div>
+        <div>
+          <p class="text-3xl font-black text-indigo-400">+35%</p>
+          <p class="text-xs text-slate-400 mt-1">Courses par motard / jour</p>
+        </div>
+        <div>
+          <p class="text-3xl font-black text-emerald-400">-25%</p>
+          <p class="text-xs text-slate-400 mt-1">Pannes mécaniques (PMS)</p>
+        </div>
+        <div>
+          <p class="text-3xl font-black text-purple-400">100%</p>
+          <p class="text-xs text-slate-400 mt-1">Traçabilité client en direct</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LES PROBLÈMES DU QUOTIDIEN QUE VOUS RÉSOLVEZ -->
+  <section id="problemes" class="py-24 bg-slate-900/40 border-y border-slate-900">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-xs uppercase font-extrabold text-indigo-400 tracking-wider">Les défis de la livraison urbaine</h2>
+        <p class="text-3xl font-bold text-white mt-2">Gérer des motards sans logiciel est un gouffre financier.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl relative">
+          <div class="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center mb-5">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Les pertes sur le Cash (COD)</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Combien d'espèces vos motards ont-ils dans leur poche en ce moment même ? Sans réconciliation en temps réel, les écarts en fin de journée sont fréquents.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl relative">
+          <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center mb-5">
+            <i data-lucide="wrench" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Les pannes imprévues</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Une vidange oubliée, c'est un moteur serré et une moto immobilisée pendant 3 jours. Le PMS calcule les kilomètres réels pour anticiper chaque entretien.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl relative">
+          <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center mb-5">
+            <i data-lucide="phone-call" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">« Le livreur est où ? »</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Vos clients s'impatientent et vos lignes téléphoniques saturent. Un simple lien de suivi WhatsApp envoyé au client élimine 90 % des appels d'angoisse.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FONCTIONNALITÉS CLÉS -->
+  <section id="fonctionnalites" class="py-24">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-xs uppercase font-extrabold text-emerald-400 tracking-wider">Tout-en-un</h2>
+        <p class="text-3xl font-bold text-white mt-2">La suite opérationnelle complète pour votre entreprise</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Feature 1 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="map" class="w-6 h-6 text-indigo-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Supervision GPS en Direct</h4>
+          <p class="text-xs text-slate-400 mt-2">Localisez chaque deux-roues en temps réel dans les rues avec vitesse et statut de course.</p>
+        </div>
+        <!-- Feature 2 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="message-square" class="w-6 h-6 text-emerald-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Suivi Client WhatsApp</h4>
+          <p class="text-xs text-slate-400 mt-2">Lien direct style Uber Eats envoyé instantanément sur le WhatsApp du destinataire.</p>
+        </div>
+        <!-- Feature 3 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="shield-check" class="w-6 h-6 text-purple-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Preuve de Livraison (OTP)</h4>
+          <p class="text-xs text-slate-400 mt-2">Code de validation à 4 chiffres pour s'assurer que le colis est remis à la bonne personne.</p>
+        </div>
+        <!-- Feature 4 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="wallet" class="w-6 h-6 text-amber-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Clôture de Caisse (COD)</h4>
+          <p class="text-xs text-slate-400 mt-2">Visualisez exactement le montant encaissé par chaque livreur et soldez la journée en un clic.</p>
+        </div>
+        <!-- Feature 5 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="wrench" class="w-6 h-6 text-rose-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Maintenance Préventive (PMS)</h4>
+          <p class="text-xs text-slate-400 mt-2">Jauges d'usure des consommables et alertes automatiques à 3 000 km pour les vidanges.</p>
+        </div>
+        <!-- Feature 6 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition">
+          <i data-lucide="file-spreadsheet" class="w-6 h-6 text-blue-400 mb-4"></i>
+          <h4 class="font-bold text-base text-white">Export Comptable Excel</h4>
+          <p class="text-xs text-slate-400 mt-2">Téléchargement instantané des bilans quotidiens et mensuels pour votre comptabilité.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARIFICATION B2B -->
+  <section id="tarifs" class="py-24 bg-slate-900/30 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-xs uppercase font-extrabold text-indigo-400 tracking-wider">Tarifs Simples & Transparents</h2>
+        <p class="text-3xl font-bold text-white mt-2">Un investissement amorti dès la première semaine</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
+        <!-- Pack Starter -->
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-lg text-white">Pack Starter</h3>
+            <p class="text-xs text-slate-400 mt-1">Idéal pour démarrer</p>
+            <div class="my-6">
+              <span class="text-4xl font-black text-white">25 000</span>
+              <span class="text-xs text-slate-400">FCFA / mois</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Jusqu'à 5 motos</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Suivi GPS en direct</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Clôture de caisse quotidienne</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Support WhatsApp</li>
+            </ul>
+          </div>
+          <a href="https://wa.me/2250749309717?text=Je%20souhaite%20souscrire%20au%20Pack%20Starter%20FleetPulse" target="_blank" class="mt-8 w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-xl text-xs text-center transition">
+            Choisir ce plan
+          </a>
+        </div>
+
+        <!-- Pack Pro (Mis en avant) -->
+        <div class="bg-slate-900 border-2 border-indigo-500 p-8 rounded-3xl flex flex-col justify-between relative shadow-2xl shadow-indigo-500/10">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] uppercase font-extrabold px-3 py-1 rounded-full tracking-wider">
+            Recommandé
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">Pack Pro</h3>
+            <p class="text-xs text-slate-400 mt-1">Pour les flottes en croissance</p>
+            <div class="my-6">
+              <span class="text-4xl font-black text-white">65 000</span>
+              <span class="text-xs text-slate-400">FCFA / mois</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> <b>Jusqu'à 15 motos</b></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Module Maintenance PMS</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Suivi WhatsApp client en direct</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Preuve de livraison (Code OTP)</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Export comptable Excel</li>
+            </ul>
+          </div>
+          <a href="https://wa.me/2250749309717?text=Je%20souhaite%20souscrire%20au%20Pack%20Pro%20FleetPulse" target="_blank" class="mt-8 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-xs text-center transition shadow-lg shadow-indigo-600/30">
+            Démarrer l'essai Pro
+          </a>
+        </div>
+
+        <!-- Pack Enterprise -->
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-lg text-white">Pack Enterprise</h3>
+            <p class="text-xs text-slate-400 mt-1">Grandes flottes & Messageries</p>
+            <div class="my-6">
+              <span class="text-4xl font-black text-white">120 000</span>
+              <span class="text-xs text-slate-400">FCFA / mois</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Motos illimitées</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Comptes dispatchers multiples</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Formation de vos équipes sur site</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Support dédié 24/7</li>
+            </ul>
+          </div>
+          <a href="https://wa.me/2250749309717?text=Je%20souhaite%20des%20informations%20sur%20le%20Pack%20Enterprise%20FleetPulse" target="_blank" class="mt-8 w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-xl text-xs text-center transition">
+            Contacter les ventes
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNIÈRE FINALE / APPEL À L'ACTION -->
+  <section class="py-20 relative">
+    <div class="max-w-4xl mx-auto px-6 text-center bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900 border border-indigo-500/20 p-12 rounded-3xl">
+      <h2 class="text-3xl font-extrabold text-white">Prêt à digitaliser votre flotte dès aujourd'hui ?</h2>
+      <p class="text-sm text-slate-400 mt-3 max-w-xl mx-auto">
+        Rejoignez les entreprises de livraison qui sécurisent leur trésorerie et fidélisent leurs clients avec FleetPulse.
+      </p>
+      <div class="mt-8 flex justify-center gap-4">
+        <a href="https://wa.me/2250749309717?text=Bonjour,%20je%20souhaite%20démarrer%20avec%20FleetPulse" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
+          <i data-lucide="message-circle" class="w-5 h-5"></i> Discuter sur WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-900 py-10 text-center text-xs text-slate-500">
+    <p>© 2026 FleetPulse Technologies. Tous droits réservés.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
